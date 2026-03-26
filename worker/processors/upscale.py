@@ -50,6 +50,11 @@ class UpscaleProcessor(BaseProcessor):
         Returns:
             Prepared workflow with image path
         """
+        task_id = task_data.get("task_id")
+
+        # Replace template variables
+        output_prefix = f"upscale_{task_id[:8]}"  # Use first 8 chars of task_id
+
         # Extract image path from task data
         # API provides images as: {"source": {"path": "...", "filename": "...", "format": "..."}}
         images = task_data.get("images", {})
@@ -60,6 +65,14 @@ class UpscaleProcessor(BaseProcessor):
         if not input_image:
             raise ValueError("input_image path is required")
 
+        # Replace template variables in workflow
+        for node_id, node_data in workflow.items():
+            if isinstance(node_data, dict) and "inputs" in node_data:
+                # Replace {{OUTPUT_PREFIX}} with actual value
+                for key, value in node_data["inputs"].items():
+                    if isinstance(value, str) and "{{OUTPUT_PREFIX}}" in value:
+                        node_data["inputs"][key] = value.replace("{{OUTPUT_PREFIX}}", output_prefix)
+
         # Find LoadImage node and set its path
         # Assuming the workflow has a LoadImage node with ID 3
         # You may need to adjust the node ID based on your actual workflow
@@ -69,7 +82,7 @@ class UpscaleProcessor(BaseProcessor):
         else:
             logger.warning("Node 3 (input image) not found in workflow")
 
-        logger.info(f"Prepared upscale workflow: input={input_image}")
+        logger.info(f"Prepared upscale workflow: input={input_image}, output_prefix={output_prefix}")
         return workflow
 
     def get_timeout(self) -> int:
