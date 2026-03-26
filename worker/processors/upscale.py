@@ -3,7 +3,7 @@ import logging
 import json
 import os
 from typing import Dict, Any
-from base import BaseProcessor
+from processors.base import BaseProcessor
 from config import settings
 
 logger = logging.getLogger(__name__)
@@ -45,16 +45,20 @@ class UpscaleProcessor(BaseProcessor):
 
         Args:
             workflow: Base workflow template
-            task_data: Task data containing input_image
+            task_data: Task data containing images.source.path
 
         Returns:
             Prepared workflow with image path
         """
         # Extract image path from task data
-        input_image = task_data.get("input_image")
+        # API provides images as: {"source": {"path": "...", "filename": "...", "format": "..."}}
+        images = task_data.get("images", {})
+        source_image = images.get("source", {})
+
+        input_image = source_image.get("path")
 
         if not input_image:
-            raise ValueError("input_image is required")
+            raise ValueError("input_image path is required")
 
         # Find LoadImage node and set its path
         # Assuming the workflow has a LoadImage node with ID 3

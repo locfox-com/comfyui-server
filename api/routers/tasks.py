@@ -95,7 +95,7 @@ async def get_task_status(
     api_key: str = Depends(verify_api_key)
 ):
     """Get task status"""
-    task_data = redis_client.get_task(task_id)
+    task_data = redis_client.get_task_data(task_id)
 
     if not task_data:
         raise HTTPException(

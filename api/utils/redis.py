@@ -26,6 +26,66 @@ class RedisClient:
             logger.error(f"Redis ping failed: {e}")
             return False
 
+    def create_task(self, task_id: str, task_data: dict) -> bool:
+        """Create task in Redis"""
+        try:
+            # Store task data as JSON string
+            task_key = f"task:data:{task_id}"
+            task_json = json.dumps(task_data)
+            self.client.set(task_key, task_json, ex=604800)  # 7 days TTL
+
+            # Set initial status
+            self.set_task_status(task_id, {
+                "task_id": task_id,
+                "status": task_data.get("status", "queued"),
+                "progress": 0,
+                "created_at": task_data.get("created_at"),
+                "type": task_data.get("type")
+            })
+
+            logger.info(f"Task {task_id} created in Redis")
+            return True
+        except redis.RedisError as e:
+            logger.error(f"Failed to create task: {e}")
+            return False
+
+    def add_to_queue(self, task_id: str, task_type: str) -> int:
+        """Add task to queue and return position"""
+        try:
+            queue_key = f"queue:{task_type}"
+            position = self.client.rpush(queue_key, task_id)
+            logger.info(f"Task {task_id} added to {task_type} queue at position {position}")
+            return position
+        except redis.RedisError as e:
+            logger.error(f"Failed to add to queue: {e}")
+            return 0
+
+    def pop_task(self, queue_name: str = "task:queue", timeout: int = 1) -> Optional[str]:
+        """Pop task from queue (blocking)"""
+        try:
+            result = self.client.brpop(queue_name, timeout=timeout)
+            if result:
+                return result[1]  # Return task_id
+            return None
+        except redis.RedisError as e:
+            logger.error(f"Failed to pop from queue: {e}")
+            return None
+
+    def get_task_data(self, task_id: str) -> Optional[dict]:
+        """Get task data"""
+        try:
+            task_key = f"task:data:{task_id}"
+            data_json = self.client.get(task_key)
+            if data_json:
+                return json.loads(data_json)
+            return None
+        except redis.RedisError as e:
+            logger.error(f"Failed to get task data: {e}")
+            return None
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse task data JSON: {e}")
+            return None
+
     def push_task(self, task_data: dict) -> bool:
         """Push task to queue"""
         try:

@@ -105,7 +105,7 @@ class R2Client:
             self.client.head_bucket(Bucket=self.bucket_name)
             logger.info("R2 connection test successful")
             return True
-        except ClientError as e:
+        except Exception as e:
             logger.error(f"R2 connection test failed: {e}")
             return False
 

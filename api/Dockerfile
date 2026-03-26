@@ -1,5 +1,15 @@
 FROM python:3.12-slim
 
+# Accept proxy arguments for build time
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG NO_PROXY
+
+# Set proxy if provided
+ENV HTTP_PROXY=${HTTP_PROXY}
+ENV HTTPS_PROXY=${HTTPS_PROXY}
+ENV NO_PROXY=${NO_PROXY}
+
 WORKDIR /app
 
 # Install system dependencies

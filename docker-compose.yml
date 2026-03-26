@@ -28,7 +28,7 @@ services:
     restart: unless-stopped
 
   api:
-    build: ./api
+    image: comfyui-server-api:latest
     networks:
       - internal-network
     volumes:
@@ -38,6 +38,9 @@ services:
     env_file: .env
     environment:
       - PYTHONUNBUFFERED=1
+      - HTTP_PROXY=http://172.17.0.1:7897
+      - HTTPS_PROXY=http://172.17.0.1:7897
+      - NO_PROXY=localhost,127.0.0.1,redis,comfyui,api
     restart: unless-stopped
 
   redis:
@@ -50,7 +53,7 @@ services:
     restart: unless-stopped
 
   worker:
-    build: ./worker
+    image: comfyui-server-worker:latest
     networks:
       - internal-network
     volumes:
@@ -61,10 +64,13 @@ services:
     env_file: .env
     environment:
       - PYTHONUNBUFFERED=1
+      - HTTP_PROXY=http://172.17.0.1:7897
+      - HTTPS_PROXY=http://172.17.0.1:7897
+      - NO_PROXY=localhost,127.0.0.1,redis,comfyui,api
     restart: unless-stopped
 
   comfyui:
-    build: ./comfyui
+    image: comfyui-server-comfyui:latest
     networks:
       - internal-network
     volumes:

@@ -3,7 +3,7 @@ import logging
 import json
 import os
 from typing import Dict, Any
-from base import BaseProcessor
+from processors.base import BaseProcessor
 from config import settings
 
 logger = logging.getLogger(__name__)

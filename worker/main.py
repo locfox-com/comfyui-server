@@ -57,7 +57,7 @@ class Worker:
         Returns:
             True on success, False on failure
         """
-        task_type = task_data.get("task_type")
+        task_type = task_data.get("task_type") or task_data.get("type")
         task_id = task_data.get("task_id")
 
         if not task_type or not task_id:
@@ -110,8 +110,16 @@ class Worker:
 
         while self.running:
             try:
-                # Pop task from queue (blocking)
-                task_data = redis_client.pop_task(timeout=settings.worker_poll_interval)
+                # Try to pop from each task queue
+                task_data = None
+                for queue_name in ["queue:upscale", "queue:face-swap", "queue:remove-background"]:
+                    task_id = redis_client.pop_from_queue(queue_name, timeout=1)
+                    if task_id:
+                        # Get full task data
+                        task_data = redis_client.get_task_data(task_id)
+                        if task_data:
+                            logger.info(f"Popped task {task_id} from {queue_name}")
+                            break
 
                 if task_data:
                     # Process task in thread pool

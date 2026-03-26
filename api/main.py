@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
     """Lifespan context manager"""
     # Startup
     logger.info("Starting API service...")
-    logger.info(f"Environment: {settings.environment}")
+    # logger.info(f"Environment: {settings.environment}")
     logger.info(f"Debug mode: {settings.debug}")
 
     # Test Redis connection
@@ -49,7 +49,7 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins=settings.allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -105,11 +105,11 @@ async def startup_event():
     """Log startup information"""
     logger.info("=" * 50)
     logger.info("ComfyUI Task API Started")
-    logger.info(f"Environment: {settings.environment}")
+    # logger.info(f"Environment: {settings.environment}")
     logger.info(f"Debug: {settings.debug}")
     logger.info(f"Max Image Size: {settings.max_image_size_bytes} bytes")
     logger.info(f"Supported Formats: {settings.supported_formats}")
-    logger.info(f"CORS Origins: {settings.cors_origins}")
+    logger.info(f"CORS Origins: {settings.allowed_origins}")
     logger.info("=" * 50)
 
 # Shutdown event logging

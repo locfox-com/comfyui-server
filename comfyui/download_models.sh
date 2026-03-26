@@ -28,15 +28,15 @@ else
     echo "✓ RealESRGAN_x4plus.pth already exists, skipping"
 fi
 
-# 3. Remove Background Model (RMBG-1.4)
+# 3. Remove Background Model (BRIA-RMBG-2.0)
 mkdir -p "$MODELS_DIR/rmbg"
-echo "Downloading RMBG-1.4.pth..."
-if [ ! -f "$MODELS_DIR/rmbg/RMBG-1.4.pth" ]; then
-    curl -L -o "$MODELS_DIR/rmbg/RMBG-1.4.pth" \
-      "https://huggingface.co/briaai/RMBG-1.4/resolve/main/RMBG-1.4.pth"
-    echo "✓ RMBG-1.4.pth downloaded"
+echo "Downloading BRIA-RMBG-2.0.pth..."
+if [ ! -f "$MODELS_DIR/rmbg/briarmbg_2_0.pth" ]; then
+    curl -L -o "$MODELS_DIR/rmbg/briarmbg_2_0.pth" \
+      "https://huggingface.co/briaai/RMBG-2.0/resolve/main/model.pth"
+    echo "✓ BRIA-RMBG-2.0.pth downloaded"
 else
-    echo "✓ RMBG-1.4.pth already exists, skipping"
+    echo "✓ BRIA-RMBG-2.0.pth already exists, skipping"
 fi
 
 echo ""

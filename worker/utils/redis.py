@@ -52,6 +52,50 @@ class RedisClient:
             logger.error(f"Failed to decode task JSON: {e}")
             return None
 
+    def pop_from_queue(self, queue_name: str, timeout: int = 1) -> Optional[str]:
+        """
+        Pop task ID from queue (blocking)
+
+        Args:
+            queue_name: Queue name
+            timeout: Blocking timeout in seconds
+
+        Returns:
+            Task ID string, None if no task
+        """
+        try:
+            result = self.client.brpop(queue_name, timeout=timeout)
+            if result:
+                _, task_id = result
+                return task_id
+            return None
+        except redis.RedisError as e:
+            logger.error(f"Failed to pop from queue {queue_name}: {e}")
+            return None
+
+    def get_task_data(self, task_id: str) -> Optional[Dict]:
+        """
+        Get task data by ID
+
+        Args:
+            task_id: Task ID
+
+        Returns:
+            Task data dictionary, None if not found
+        """
+        try:
+            task_key = f"task:data:{task_id}"
+            task_json = self.client.get(task_key)
+            if task_json:
+                return json.loads(task_json)
+            return None
+        except redis.RedisError as e:
+            logger.error(f"Failed to get task data: {e}")
+            return None
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to decode task data JSON: {e}")
+            return None
+
     def set_task_status(self, task_id: str, status_data: Dict, ttl: int = 604800) -> bool:
         """
         Set task status (default TTL 7 days)
