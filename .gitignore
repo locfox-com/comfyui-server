@@ -1,2 +1,7 @@
 # Worktrees
 .worktrees/
+
+# Environment files
+.env
+.env.local
+.env.*.local
