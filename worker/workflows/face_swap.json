@@ -1,0 +1,30 @@
+{
+  "3": {
+    "inputs": {
+      "image": "{{INPUT_IMAGE_PATH}}",
+      "upload": "image"
+    },
+    "class_type": "LoadImage"
+  },
+  "4": {
+    "inputs": {
+      "image": "{{TARGET_IMAGE_PATH}}",
+      "upload": "image"
+    },
+    "class_type": "LoadImage"
+  },
+  "5": {
+    "inputs": {
+      "image": ["4", 0],
+      "upload": "image"
+    },
+    "class_type": "ReActorFastFaceSwap"
+  },
+  "6": {
+    "inputs": {
+      "images": ["5", 0],
+      "filename_prefix": "{{OUTPUT_PREFIX}}"
+    },
+    "class_type": "SaveImage"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "3": {
+    "inputs": {
+      "image": "{{INPUT_IMAGE_PATH}}",
+      "upload": "image"
+    },
+    "class_type": "LoadImage"
+  },
+  "4": {
+    "inputs": {
+      "rmbg_model": "RMBG-1.4.pth",
+      "image": ["3", 0]
+    },
+    "class_type": "RemoveBground"
+  },
+  "5": {
+    "inputs": {
+      "images": ["4", 0],
+      "filename_prefix": "{{OUTPUT_PREFIX}}"
+    },
+    "class_type": "SaveImage"
+  }
+}
