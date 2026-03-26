@@ -5,3 +5,118 @@
 .env
 .env.local
 .env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker
+.docker/
+
+# AI Models (large files)
+ComfyUI/models/checkpoints/
+ComfyUI/models/loras/
+ComfyUI/models/embeddings/
+ComfyUI/models/vae/
+ComfyUI/models/clip_vision/
+ComfyUI/models/ipadapter/
+ComfyUI/models/controlnet/
+ComfyUI/models/*.pth
+ComfyUI/models/*.pt
+ComfyUI/models/*.onnx
+ComfyUI/models/*.safetensors
+*.pth
+*.pt
+*.onnx
+*.safetensors
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Test outputs
+test_uploads/
+test_outputs/
+coverage.xml
+*.cover
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Node modules (if any frontend components)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Cloudflare R2 (if using local rclone)
+rclone.conf
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# Local development files
+local/
+.dev/
+dev-compose.yml
