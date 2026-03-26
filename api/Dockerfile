@@ -2,25 +2,25 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# 安装系统依赖
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# 复制依赖文件
+# Copy dependency files
 COPY requirements.txt .
 
-# 安装 Python 依赖
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 复制应用代码
+# Copy application code
 COPY . .
 
-# 创建必要的目录
+# Create necessary directories
 RUN mkdir -p /app/logs
 
-# 暴露端口（内部网络使用）
+# Expose port (for internal network use)
 EXPOSE 8000
 
-# 启动命令
+# Start command
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
