@@ -11,12 +11,20 @@ logger = logging.getLogger(__name__)
 class R2Client:
     def __init__(self):
         self.endpoint_url = f"https://{settings.r2_account_id}.r2.cloudflarestorage.com"
+
+        # Disable proxy for R2 communication
+        from botocore.config import Config
+        config = Config(
+            proxies={'http': None, 'https': None}
+        )
+
         self.client = boto3.client(
             's3',
             endpoint_url=self.endpoint_url,
             aws_access_key_id=settings.r2_access_key_id,
             aws_secret_access_key=settings.r2_secret_access_key,
-            region_name='auto'
+            region_name='auto',
+            config=config
         )
         self.bucket_name = settings.r2_bucket_name
         self.public_url = settings.r2_public_url
