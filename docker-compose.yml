@@ -1,0 +1,89 @@
+version: "3.8"
+
+networks:
+  external-network:
+    driver: bridge
+  internal-network:
+    driver: bridge
+    internal: true
+
+volumes:
+  shared-data:
+  comfyui-models:
+  comfyui-output:
+  redis-data:
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "${NGINX_PORT:-80}:80"
+    networks:
+      - external-network
+      - internal-network
+    depends_on:
+      - api
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+
+  api:
+    image: comfyui-server-api:latest
+    networks:
+      - internal-network
+    volumes:
+      - shared-data:/data
+    depends_on:
+      - redis
+    env_file: .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - HTTP_PROXY=http://172.17.0.1:7897
+      - HTTPS_PROXY=http://172.17.0.1:7897
+      - NO_PROXY=localhost,127.0.0.1,redis,comfyui,api
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    networks:
+      - internal-network
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+
+  worker:
+    image: comfyui-server-worker:latest
+    networks:
+      - internal-network
+    volumes:
+      - shared-data:/data
+    depends_on:
+      - redis
+      - comfyui
+    env_file: .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - HTTP_PROXY=http://172.17.0.1:7897
+      - HTTPS_PROXY=http://172.17.0.1:7897
+      - NO_PROXY=localhost,127.0.0.1,redis,comfyui,api
+    restart: unless-stopped
+
+  comfyui:
+    image: comfyui-server-comfyui:latest
+    networks:
+      - internal-network
+    volumes:
+      - comfyui-models:/app/ComfyUI/models
+      - comfyui-output:/app/ComfyUI/output
+      - shared-data:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    restart: unless-stopped

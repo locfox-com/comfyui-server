@@ -1,0 +1,27 @@
+{
+  "3": {
+    "inputs": {
+      "image": "{{INPUT_IMAGE_PATH}}",
+      "upload": "image"
+    },
+    "class_type": "LoadImage"
+  },
+  "4": {
+    "inputs": {
+      "upscale_model": "RealESRGAN_x4plus.pth",
+      "image": ["3", 0],
+      "upscale_method": "lanczos",
+      "width": 512,
+      "height": 512,
+      "crop": "disabled"
+    },
+    "class_type": "ImageScale"
+  },
+  "5": {
+    "inputs": {
+      "images": ["4", 0],
+      "filename_prefix": "{{OUTPUT_PREFIX}}"
+    },
+    "class_type": "SaveImage"
+  }
+}
