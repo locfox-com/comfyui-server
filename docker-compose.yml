@@ -32,6 +32,13 @@ services:
     env_file: .env
     environment:
       - PYTHONUNBUFFERED=1
+      # Disable proxy for internal service communication
+      - NO_PROXY=localhost,127.0.0.1,redis,comfyui,api
+      - no_proxy=localhost,127.0.0.1,redis,comfyui,api
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
+      - http_proxy=
+      - https_proxy=
     restart: unless-stopped
 
   redis:
@@ -55,6 +62,13 @@ services:
     env_file: .env
     environment:
       - PYTHONUNBUFFERED=1
+      # Disable proxy for internal service communication
+      - NO_PROXY=localhost,127.0.0.1,redis,comfyui,api
+      - no_proxy=localhost,127.0.0.1,redis,comfyui,api
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
+      - http_proxy=
+      - https_proxy=
     restart: unless-stopped
 
   comfyui:
