@@ -26,7 +26,12 @@ class ComfyUIClient:
         """
         url = f"{self.base_url}{endpoint}"
         try:
-            response = requests.request(method, url, timeout=self.timeout, **kwargs)
+            # Disable proxy for internal communication
+            proxies = {
+                'http': None,
+                'https': None
+            }
+            response = requests.request(method, url, timeout=self.timeout, proxies=proxies, **kwargs)
             response.raise_for_status()
             return response
         except requests.RequestException as e:
