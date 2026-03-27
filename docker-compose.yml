@@ -11,8 +11,6 @@ volumes:
 services:
   nginx:
     image: nginx:alpine
-    ports:
-      - "${NGINX_PORT:-80}:80"
     networks:
       - dokploy-network
     depends_on:
@@ -32,13 +30,14 @@ services:
     env_file: .env
     environment:
       - PYTHONUNBUFFERED=1
-      # Disable proxy for internal service communication
-      - NO_PROXY=localhost,127.0.0.1,redis,comfyui,api
-      - no_proxy=localhost,127.0.0.1,redis,comfyui,api
+      - NO_PROXY=localhost,127.0.0.1,redis,comfyui,api,nginx
+      - no_proxy=localhost,127.0.0.1,redis,comfyui,api,nginx
       - HTTP_PROXY=
       - HTTPS_PROXY=
+      - ALL_PROXY=
       - http_proxy=
       - https_proxy=
+      - all_proxy=
     restart: unless-stopped
 
   redis:
@@ -62,13 +61,14 @@ services:
     env_file: .env
     environment:
       - PYTHONUNBUFFERED=1
-      # Disable proxy for internal service communication
-      - NO_PROXY=localhost,127.0.0.1,redis,comfyui,api
-      - no_proxy=localhost,127.0.0.1,redis,comfyui,api
+      - NO_PROXY=localhost,127.0.0.1,redis,comfyui,api,nginx
+      - no_proxy=localhost,127.0.0.1,redis,comfyui,api,nginx
       - HTTP_PROXY=
       - HTTPS_PROXY=
+      - ALL_PROXY=
       - http_proxy=
       - https_proxy=
+      - all_proxy=
     restart: unless-stopped
 
   comfyui:
