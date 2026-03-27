@@ -1,0 +1,105 @@
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# Documentation (keep README.md)
+CLAUDE.md
+FINAL_SUMMARY.md
+IMPLEMENTATION_COMPLETE.md
+docs/superpowers/
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Node modules (if any frontend)
+node_modules/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Logs (Dokploy handles logging)
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Worktree (if deploying from main branch)
+.worktrees/
+
+# Environment files (use Dokploy's env management)
+.env.local
+.env.development
+.env.test
+.env.*.local
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Backup files
+*.bak
+backup/
+*.backup
+
+# Database files (if any local SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Large files not needed in deployment
+*.tar.gz
+*.zip
+*.rar
+
+# Scripts not needed in production
+install-nvidia-container.sh
+fix-and-restart.sh
+verify_setup.sh
+
+# ComfyUI local data (should be in volumes)
+ComfyUI/input/
+ComfyUI/output/
+ComfyUI/temp/
+
+# Local development overrides
+docker-compose.override.yml
+docker-compose.dev.yml
+docker-compose.test.yml
+
+# Dokploy specific
+dokploy-logs/
+dokploy-temp/

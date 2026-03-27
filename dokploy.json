@@ -1,0 +1,149 @@
+{
+  "name": "comfyui-ai-server",
+  "description": "ComfyUI AI Image Processing Server - Face swap, upscaling, and background removal",
+  "version": "1.0.0",
+  "environment": "production",
+  "deployment_type": "docker-compose",
+  "build": {
+    "docker_compose": {
+      "file": "docker-compose.yml",
+      "env_file": ".env"
+    }
+  },
+  "resources": {
+    "cpu": {
+      "api": "1",
+      "worker": "1",
+      "comfyui": "2",
+      "redis": "0.5",
+      "nginx": "0.5"
+    },
+    "memory": {
+      "api": "2gb",
+      "worker": "2gb",
+      "comfyui": "8gb",
+      "redis": "512mb",
+      "nginx": "256mb"
+    },
+    "gpu": {
+      "comfyui": {
+        "count": 1,
+        "capabilities": ["gpu"],
+        "driver": "nvidia"
+      }
+    }
+  },
+  "networking": {
+    "public_ports": {
+      "80": "nginx"
+    },
+    "internal_network": "comfyui-internal",
+    "external_network": "comfyui-external"
+  },
+  "volumes": {
+    "shared-data": {
+      "type": "volume",
+      "size": "10gb",
+      "description": "Shared input/output data between services"
+    },
+    "comfyui-models": {
+      "type": "volume",
+      "size": "50gb",
+      "description": "AI models storage (persistent)"
+    },
+    "comfyui-output": {
+      "type": "volume",
+      "size": "20gb",
+      "description": "ComfyUI output images"
+    },
+    "redis-data": {
+      "type": "volume",
+      "size": "1gb",
+      "description": "Redis persistence data"
+    }
+  },
+  "services": {
+    "nginx": {
+      "image": "nginx:alpine",
+      "replicas": 1,
+      "health_check": {
+        "path": "/health",
+        "interval": "30s",
+        "timeout": "10s",
+        "retries": 3
+      }
+    },
+    "api": {
+      "image": "comfyui-server-api:latest",
+      "replicas": 1,
+      "health_check": {
+        "path": "/health",
+        "interval": "30s",
+        "timeout": "10s",
+        "retries": 3
+      }
+    },
+    "worker": {
+      "image": "comfyui-server-worker:latest",
+      "replicas": 1,
+      "scalable": true,
+      "max_replicas": 3
+    },
+    "comfyui": {
+      "image": "comfyui-server-comfyui:latest",
+      "replicas": 1,
+      "gpu_required": true
+    },
+    "redis": {
+      "image": "redis:alpine",
+      "replicas": 1,
+      "health_check": {
+        "command": "redis-cli ping",
+        "interval": "30s",
+        "timeout": "5s",
+        "retries": 3
+      }
+    }
+  },
+  "domains": {
+    "primary": "your-domain.com",
+    "ssl": {
+      "enabled": true,
+      "provider": "letsencrypt",
+      "auto_renew": true,
+      "email": "your-email@example.com"
+    }
+  },
+  "monitoring": {
+    "logging": {
+      "driver": "json-file",
+      "max_size": "10m",
+      "max_files": "3"
+    },
+    "metrics": {
+      "enabled": true,
+      "path": "/metrics"
+    }
+  },
+  "environment_variables": {
+    "required": [
+      "API_KEYS",
+      "R2_ACCOUNT_ID",
+      "R2_ACCESS_KEY_ID",
+      "R2_SECRET_ACCESS_KEY",
+      "R2_BUCKET_NAME",
+      "R2_PUBLIC_URL"
+    ],
+    "optional": [
+      "REDIS_PASSWORD",
+      "GPU_TEMP_THRESHOLD",
+      "WORKER_CONCURRENCY",
+      "LOG_LEVEL"
+    ]
+  },
+  "deployment": {
+    "strategy": "rolling",
+    "health_check_delay": "30s",
+    "restart_policy": "unless-stopped"
+  }
+}
