@@ -12,7 +12,7 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - "18080:80"
     networks:
       - dokploy-network
     depends_on:
